@@ -135,23 +135,24 @@ public class ImageDisplay {
 		if (M == 0) {
 			for (int l = 0; l <= numberOfLevels; l++) {
 				double power = (double) l / numberOfLevels;
-				quantizedLevels[l] = Math.min(255, (int) Math.round(Math.pow(255, power)) - 1);
+				quantizedLevels[l] = (int) Math.round(255 * Math.pow(power, 2));
 			}
 		} else if (M == 255) {
 			for (int l = 0; l <= numberOfLevels; l++) {
 				double power = (double) l / numberOfLevels;
-				quantizedLevels[l] = Math.max(0, 255 - (int) Math.round(Math.pow(255, power)) + 1);
+				quantizedLevels[l] = (int) Math.round(255 * (1 - Math.pow(1 - power, 2)));
 			}
-			Arrays.sort(quantizedLevels);
-
 		} else {
 			int half = numberOfLevels / 2;
-			quantizedLevels[half] = M;
 			for (int l = 1; l <= half; l++) {
 				double power = Math.pow((double) l / half, 2);
 				quantizedLevels[half - l] = (int) (M - Math.round(M * power));
 				quantizedLevels[half + l] = (int) (M + Math.round((255 - M) * power));
 			}
+			quantizedLevels[0] = 0;
+			quantizedLevels[half] = M;
+			quantizedLevels[numberOfLevels] = 255;
+
 		}
 
 		for (int i = 0; i < numberOfLevels; i++) {
